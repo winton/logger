@@ -72,12 +72,13 @@ export class Logger {
   }: {
     code: string
     step?: Record<string, any>
-    trace: string
+    trace: string[]
   }): void {
+    const i = step ? "🐤" : "🥚"
     const s = this.stepInfo(step)
-    const t = step ? "" : `${trace}`
+    const t = step ? trace[0] : `${trace.join(" ")}`
     // eslint-disable-next-line
-    console.log(`🐣 Starting ${code}\t${s}${t}`)
+    console.log(`${i} Starting ${code}\t${t}${s}`)
   }
 
   private logFinish({
@@ -88,36 +89,37 @@ export class Logger {
   }: {
     code: string
     step?: Record<string, any>
-    trace: string
+    trace: string[]
     time: number
   }): void {
+    const i = step ? "🐔" : "🍗"
     const s = this.stepInfo(step)
-    const t = step ? "" : `${trace}`
+    const t = trace[0]
     const now = new Date().getTime()
     // eslint-disable-next-line
-    console.log(`🍗 Finished ${code}\t${s}${t} - ${now - time} ms`)
+    console.log(`${i} Finished ${code}\t${t}${s}\t(${now - time} ms)`)
   }
 
   private stepInfo(step: Record<string, any>): string {
     return step
       ? Object.keys(step).length
-        ? `{ ${Object.keys(step).join(", ")} }`
-        : "{}"
+        ? `\t{ ${Object.keys(step).join(", ")} }`
+        : "\t{}"
       : ""
   }
 
-  private stackTrace(): string {
+  private stackTrace(): string[] {
     const err = new Error()
-    const stack = err.stack
+
+    let stack = err.stack
       .match(/^\s+at\s.+$/gm)[4]
-      .replace(/^\s+at\s/, "")
-      .replace(/^\s+/, "")
+      .replace(/^\s+at\s+/, "")
 
     if (typeof process !== "undefined") {
-      return stack.replace(process.cwd() + "/", "")
+      stack = stack.replace(process.cwd() + "/", "")
     }
 
-    return stack
+    return stack.split(" (")
   }
 }
 
