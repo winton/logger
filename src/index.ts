@@ -81,18 +81,19 @@ export class Logger {
     if (typeof process !== "undefined" && process.env.LOG) {
       const code = this.tinyId.generate()
       const time = new Date().getTime()
-
       const trace = this.stackTrace()
 
-      const newSteps = steps.reduce((memo, step) => {
+      const newSteps = steps.reduce((memo, step, i) => {
         return memo.concat([
           {
-            args: [{ code, step, trace }],
+            args: [{ code: `${code}${i}`, step, trace }],
             logStart: this.logStart,
           },
           step,
           {
-            args: [{ code, step, trace, time }],
+            args: [
+              { code: `${code}${i}`, step, trace, time },
+            ],
             logFinish: this.logFinish,
           },
         ])
