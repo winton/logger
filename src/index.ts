@@ -1,11 +1,11 @@
 import { fn2 } from "@fn2/loaded"
 import patch from "@fn2/patch"
+import tinyId from "@fn2/tiny-id"
 
 export class Logger {
   fn2: typeof fn2 = null
   patch: typeof patch = null
-
-  counter = 0
+  tinyId: typeof tinyId = null
 
   loaded(): void {
     const prepareArgs = this.fn2.prepareArgs.bind(this.fn2)
@@ -26,11 +26,11 @@ export class Logger {
   }
 
   logStart({
-    count,
+    code,
     step,
     trace,
   }: {
-    count: number
+    code: string
     step?: Record<string, any>
     trace: string
   }): void {
@@ -39,16 +39,16 @@ export class Logger {
       : ""
     const t = step ? "" : ` ${trace}`
     // eslint-disable-next-line
-  console.log(`🐤 Starting ${count}${s}${t}`)
+  console.log(`🐤 Starting ${code}${s}${t}`)
   }
 
   logFinish({
-    count,
+    code,
     step,
     trace,
     time,
   }: {
-    count: number
+    code: string
     step?: Record<string, any>
     trace: string
     time: number
@@ -59,7 +59,7 @@ export class Logger {
     const t = step ? "" : ` ${trace}`
     const now = new Date().getTime()
     // eslint-disable-next-line
-    console.log(`🦆 Finished ${count}${s}${t} in ${now - time} ms`)
+    console.log(`🦆 Finished ${code}${s}${t} in ${now - time} ms`)
   }
 
   stackTrace(): string {
@@ -79,7 +79,7 @@ export class Logger {
     steps: Record<string, any>[]
   ): Record<string, any>[] {
     if (typeof process !== "undefined" && process.env.LOG) {
-      const count = (this.counter += 1)
+      const code = this.tinyId.generate()
       const time = new Date().getTime()
 
       const trace = this.stackTrace()
@@ -87,24 +87,24 @@ export class Logger {
       const newSteps = steps.reduce((memo, step) => {
         return memo.concat([
           {
-            args: [{ count, step, trace }],
+            args: [{ code, step, trace }],
             logStart: this.logStart,
           },
           step,
           {
-            args: [{ count, step, trace, time }],
+            args: [{ code, step, trace, time }],
             logFinish: this.logFinish,
           },
         ])
       }, [])
 
       newSteps.unshift({
-        args: [{ count, trace }],
+        args: [{ code, trace }],
         logStart: this.logStart,
       })
 
       newSteps.push({
-        args: [{ count, trace, time }],
+        args: [{ code, trace, time }],
         logFinish: this.logFinish,
       })
 
