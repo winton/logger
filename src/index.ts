@@ -76,7 +76,7 @@ export class Logger {
   }): void {
     const i = step ? "🐤" : "🥚"
     const s = this.stepInfo(step)
-    const t = step ? trace[0] : `${trace.join(" ")}`
+    const t = step ? trace[0] : `${trace.join("\t(")}`
     // eslint-disable-next-line
     console.log(`${i} Starting ${code}\t${t}${s}`)
   }
