@@ -39,7 +39,7 @@ export class Logger {
       : ""
     const t = step ? "" : ` ${trace}`
     // eslint-disable-next-line
-  console.log(`🐤 Starting ${code}${s}${t}`)
+    console.log(`🐣 Starting ${code}${s}${t}`)
   }
 
   logFinish({
@@ -59,7 +59,7 @@ export class Logger {
     const t = step ? "" : ` ${trace}`
     const now = new Date().getTime()
     // eslint-disable-next-line
-    console.log(`🦆 Finished ${code}${s}${t} in ${now - time} ms`)
+    console.log(`🍗 Finished ${code}${s}${t} in ${now - time} ms`)
   }
 
   stackTrace(): string {
