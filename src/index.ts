@@ -25,62 +25,7 @@ export class Logger {
     }
   }
 
-  logStart({
-    code,
-    step,
-    trace,
-  }: {
-    code: string
-    step?: Record<string, any>
-    trace: string
-  }): void {
-    const s = this.stepInfo(step)
-    const t = step ? "" : `${trace}`
-    // eslint-disable-next-line
-    console.log(`🐣 Starting ${code}\t${s}${t}`)
-  }
-
-  logFinish({
-    code,
-    step,
-    trace,
-    time,
-  }: {
-    code: string
-    step?: Record<string, any>
-    trace: string
-    time: number
-  }): void {
-    const s = this.stepInfo(step)
-    const t = step ? "" : `${trace}`
-    const now = new Date().getTime()
-    // eslint-disable-next-line
-    console.log(`🍗 Finished ${code}\t${s}${t} - ${now - time} ms`)
-  }
-
-  stepInfo(step: Record<string, any>): string {
-    return step
-      ? Object.keys(step).length
-        ? `{ ${Object.keys(step).join(", ")} }`
-        : "{}"
-      : ""
-  }
-
-  stackTrace(): string {
-    const err = new Error()
-    const stack = err.stack
-      .match(/^\s+at\s.+$/gm)[4]
-      .replace(/^\s+at\s/, "")
-      .replace(/^\s+/, "")
-
-    if (typeof process !== "undefined") {
-      return stack.replace(process.cwd() + "/", "")
-    }
-
-    return stack
-  }
-
-  addLoggers(
+  private addLoggers(
     steps: Record<string, any>[]
   ): Record<string, any>[] {
     if (typeof process !== "undefined" && process.env.LOG) {
@@ -118,6 +63,61 @@ export class Logger {
     }
 
     return steps
+  }
+
+  private logStart({
+    code,
+    step,
+    trace,
+  }: {
+    code: string
+    step?: Record<string, any>
+    trace: string
+  }): void {
+    const s = this.stepInfo(step)
+    const t = step ? "" : `${trace}`
+    // eslint-disable-next-line
+    console.log(`🐣 Starting ${code}\t${s}${t}`)
+  }
+
+  private logFinish({
+    code,
+    step,
+    trace,
+    time,
+  }: {
+    code: string
+    step?: Record<string, any>
+    trace: string
+    time: number
+  }): void {
+    const s = this.stepInfo(step)
+    const t = step ? "" : `${trace}`
+    const now = new Date().getTime()
+    // eslint-disable-next-line
+    console.log(`🍗 Finished ${code}\t${s}${t} - ${now - time} ms`)
+  }
+
+  private stepInfo(step: Record<string, any>): string {
+    return step
+      ? Object.keys(step).length
+        ? `{ ${Object.keys(step).join(", ")} }`
+        : "{}"
+      : ""
+  }
+
+  private stackTrace(): string {
+    const err = new Error()
+    const stack = err.stack
+      .match(/^\s+at\s.+$/gm)[4]
+      .replace(/^\s+at\s/, "")
+      .replace(/^\s+/, "")
+
+    if (typeof process !== "undefined") {
+      return stack.replace(process.cwd() + "/", "")
+    }
+
+    return stack
   }
 }
 
