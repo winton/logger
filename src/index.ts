@@ -34,12 +34,10 @@ export class Logger {
     step?: Record<string, any>
     trace: string
   }): void {
-    const s = step
-      ? ` {${Object.keys(step).join(", ")}}`
-      : ""
-    const t = step ? "" : ` ${trace}`
+    const s = this.stepInfo(step)
+    const t = step ? "" : `${trace}`
     // eslint-disable-next-line
-    console.log(`🐣 Starting ${code}${s}${t}`)
+    console.log(`🐣 Starting ${code}\t${s}${t}`)
   }
 
   logFinish({
@@ -53,19 +51,26 @@ export class Logger {
     trace: string
     time: number
   }): void {
-    const s = step
-      ? ` {${Object.keys(step).join(", ")}}`
-      : ""
-    const t = step ? "" : ` ${trace}`
+    const s = this.stepInfo(step)
+    const t = step ? "" : `${trace}`
     const now = new Date().getTime()
     // eslint-disable-next-line
-    console.log(`🍗 Finished ${code}${s}${t} in ${now - time} ms`)
+    console.log(`🍗 Finished ${code}\t${s}${t} - ${now - time} ms`)
+  }
+
+  stepInfo(step: Record<string, any>): string {
+    return step
+      ? Object.keys(step).length
+        ? `{ ${Object.keys(step).join(", ")} }`
+        : "{}"
+      : ""
   }
 
   stackTrace(): string {
     const err = new Error()
     const stack = err.stack
       .match(/^\s+at\s.+$/gm)[4]
+      .replace(/^\s+at\s/, "")
       .replace(/^\s+/, "")
 
     if (typeof process !== "undefined") {
@@ -87,26 +92,26 @@ export class Logger {
         return memo.concat([
           {
             args: [{ code: `${code}${i}`, step, trace }],
-            logStart: this.logStart,
+            logStart: this.logStart.bind(this),
           },
           step,
           {
             args: [
               { code: `${code}${i}`, step, trace, time },
             ],
-            logFinish: this.logFinish,
+            logFinish: this.logFinish.bind(this),
           },
         ])
       }, [])
 
       newSteps.unshift({
         args: [{ code, trace }],
-        logStart: this.logStart,
+        logStart: this.logStart.bind(this),
       })
 
       newSteps.push({
         args: [{ code, trace, time }],
-        logFinish: this.logFinish,
+        logFinish: this.logFinish.bind(this),
       })
 
       return newSteps
