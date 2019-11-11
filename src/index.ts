@@ -11,8 +11,7 @@ export class Logger {
 
   loaded(): void {
     const prepareArgs = this.fn2.prepareArgs.bind(this.fn2)
-
-    this.ogPrepareArgs = prepareArgs
+    this.ogPrepareArgs = this.fn2.prepareArgs
 
     this.fn2.prepareArgs = (
       m: Record<string, any>,
