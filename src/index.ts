@@ -7,8 +7,12 @@ export class Logger {
   patch: typeof patch = null
   tinyId: typeof tinyId = null
 
+  ogPrepareArgs: typeof fn2.prepareArgs
+
   loaded(): void {
     const prepareArgs = this.fn2.prepareArgs.bind(this.fn2)
+
+    this.ogPrepareArgs = prepareArgs
 
     this.fn2.prepareArgs = (
       m: Record<string, any>,
@@ -23,6 +27,10 @@ export class Logger {
       const steps2 = this.addLoggers(steps)
       return [memo, args, steps2]
     }
+  }
+
+  reset(): void {
+    this.fn2.prepareArgs = this.ogPrepareArgs
   }
 
   private addLoggers(
