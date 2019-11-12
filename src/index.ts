@@ -1,10 +1,8 @@
-import { fn2 } from "@fn2/loaded"
-import patch from "@fn2/patch"
+import fn2 from "fn2"
 import tinyId from "@fn2/tiny-id"
 
 export class Logger {
   fn2: typeof fn2 = null
-  patch: typeof patch = null
   tinyId: typeof tinyId = null
 
   ogPrepareArgs: typeof fn2.prepareArgs
