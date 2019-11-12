@@ -120,7 +120,7 @@ export class Logger {
       .match(/^\s+at\s.+$/gm)[4]
       .replace(/^\s+at\s+/, "")
 
-    if (typeof process !== "undefined") {
+    if (typeof process !== "undefined" && process.cwd) {
       stack = stack.replace(process.cwd() + "/", "")
     }
 
