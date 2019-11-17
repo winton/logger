@@ -81,7 +81,7 @@ export class Logger {
   }): void {
     const i = step ? "🐤" : "🥚"
     const s = this.stepInfo(step)
-    const t = step ? trace[0] : `${trace.join("\t(")}`
+    const t = step ? trace[0] || "" : `${trace.join("\t(")}`
     // eslint-disable-next-line
     console.log(`${i} Starting ${code}\t${t}${s}`)
   }
@@ -99,7 +99,7 @@ export class Logger {
   }): void {
     const i = step ? "🐔" : "🍗"
     const s = this.stepInfo(step)
-    const t = trace[0]
+    const t = trace[0] || ""
     const now = new Date().getTime()
     // eslint-disable-next-line
     console.log(`${i} Finished ${code}\t${t}${s}\t(${now - time} ms)`)
@@ -116,15 +116,19 @@ export class Logger {
   private stackTrace(): string[] {
     const err = new Error()
 
-    let stack = err.stack
-      .match(/^\s+at\s.+$/gm)[4]
-      .replace(/^\s+at\s+/, "")
+    try {
+      let stack = err.stack
+        .match(/^\s+at\s.+$/gm)[4]
+        .replace(/^\s+at\s+/, "")
 
-    if (typeof process !== "undefined" && process.cwd) {
-      stack = stack.replace(process.cwd() + "/", "")
+      if (typeof process !== "undefined" && process.cwd) {
+        stack = stack.replace(process.cwd() + "/", "")
+      }
+
+      return stack.split(" (")
+    } catch (e) {
+      return []
     }
-
-    return stack.split(" (")
   }
 }
 
