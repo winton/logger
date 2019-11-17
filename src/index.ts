@@ -33,7 +33,12 @@ export class Logger {
   private addLoggers(
     steps: Record<string, any>[]
   ): Record<string, any>[] {
-    if (typeof process !== "undefined" && process.env.LOG) {
+    const logMode =
+      (typeof location !== "undefined" &&
+        !!location.search.match(/[?&]log/)) ||
+      (typeof process !== "undefined" && process.env.LOG)
+
+    if (logMode) {
       const code = this.tinyId.generate()
       const time = new Date().getTime()
       const trace = this.stackTrace()
